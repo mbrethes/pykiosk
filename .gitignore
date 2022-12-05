@@ -1,0 +1,8 @@
+font/*
+img/*
+media/*
+conf/*
+__pycache__
+!conf/conf.json.sample
+!img/fond_root.gif.sample
+!font/sample.ttf

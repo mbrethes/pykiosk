@@ -1,0 +1,16 @@
+{
+    "apps":{
+        "gamedirectory1":{
+            "app":"game.exe",
+            "main":["sample.OTF", "Run",32, 23, 323],
+            "sub":["sample.OTF", "Some app!",12, 27, 369],
+            "order": 2
+        }
+    },
+    "videos":{
+        "videodirectory1":{
+            "main":["sample.OTF", "Show", 30, 23, 225],
+            "sub":["sample.OTF", "Some video!", 13 , 25, 263],
+            "order": 1
+        }    }
+}
