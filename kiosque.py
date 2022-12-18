@@ -5,6 +5,8 @@ Kiosque
 
 Projet pour une borne "Dans Mon Quartier" de Nils Chertier.
 
+Released under GPL v3, see LICENSE for details.
+
 Concept:
 
 1. Un gif animé en fond d'écran, plein écran
@@ -26,14 +28,11 @@ import subprocess
 import shutil
 import platform
 import json
+import re
 from pygame_animatedgif import AnimatedGifSprite
 
-normalColor = (0x3b,0x3e,0x4e)
-highlightColor = (0xad,0x3e,0x4e)
-
-
 class fontKiosque():
-    def __init__(self, fontA, fontB, textA, textB, sizeA, sizeB, posAX, posBX, posAY, posBY, startX, startY, scale):
+    def __init__(self, fontA, fontB, textA, textB, sizeA, sizeB, posAX, posBX, posAY, posBY, startX, startY, scale, normalColorA, highlightColorA, normalColorB, highlightColorB):
         self.posAX = posAX * scale
         self.posAY = posAY * scale
         self.posBX = posBX * scale
@@ -42,10 +41,10 @@ class fontKiosque():
         self.startY = startY
         self.fontA = pygame.font.Font(os.path.join("font",fontA),int(sizeA*scale))
         self.fontB = pygame.font.Font(os.path.join("font",fontB),int(sizeB*scale))
-        self.textANS = self.fontA.render(textA, True, normalColor)
-        self.textAS  = self.fontA.render(textA, True, highlightColor)
-        self.textBNS = self.fontB.render(textB, True, normalColor)
-        self.textBS  = self.fontB.render(textB, True, highlightColor)
+        self.textANS = self.fontA.render(textA, True, normalColorA)
+        self.textAS  = self.fontA.render(textA, True, highlightColorA)
+        self.textBNS = self.fontB.render(textB, True, normalColorB)
+        self.textBS  = self.fontB.render(textB, True, highlightColorB)
         self.selected = False
         self.callbackfunc = None
         
@@ -91,6 +90,15 @@ def launchGame(direct, executable, w, h):
     print("quit and restart with %s %d %d"%(direct, w, h))
     return setup(w, h)
 
+def colorConv(color):
+    """ Returns a 3-uple int from a 6-character hex string representing a color.
+    
+        will raise an exception if color is invalid.
+     """
+    
+    groups = re.match("^([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$", color)
+    return((int(groups.group(1), base=16), int(groups.group(2), base=16),int(groups.group(3), base=16)))
+
 def setup(w=0, h=0):
     pygame.init()
     pygame.mouse.set_visible(False)
@@ -124,12 +132,12 @@ def main():
 
     if "apps" in data.keys():
         for app in data["apps"].keys():
-            fk = fontKiosque(data["apps"][app]["main"][0], data["apps"][app]["sub"][0], data["apps"][app]["main"][1], data["apps"][app]["sub"][1], data["apps"][app]["main"][2], data["apps"][app]["sub"][2], data["apps"][app]["main"][3], data["apps"][app]["sub"][3], data["apps"][app]["main"][4], data["apps"][app]["sub"][4], dog.rect.x, dog.rect.y, scale)
+            fk = fontKiosque(data["apps"][app]["main"][0], data["apps"][app]["sub"][0], data["apps"][app]["main"][1], data["apps"][app]["sub"][1], data["apps"][app]["main"][2], data["apps"][app]["sub"][2], data["apps"][app]["main"][3], data["apps"][app]["sub"][3], data["apps"][app]["main"][4], data["apps"][app]["sub"][4], dog.rect.x, dog.rect.y, scale, colorConv(data["apps"][app]["main"][5]), colorConv(data["apps"][app]["main"][6]), colorConv(data["apps"][app]["sub"][5]),colorConv(data["apps"][app]["sub"][6]))
             fk.setCallback(lambda: launchGame(app, data["apps"][app]["app"], screenx, screeny))
             klist.append((data["apps"][app]["order"],fk))
     if "videos" in data.keys():
         for vid in data["videos"].keys():
-            fk = fontKiosque(data["videos"][vid]["main"][0], data["videos"][vid]["sub"][0], data["videos"][vid]["main"][1], data["videos"][vid]["sub"][1], data["videos"][vid]["main"][2], data["videos"][vid]["sub"][2], data["videos"][vid]["main"][3], data["videos"][vid]["sub"][3], data["videos"][vid]["main"][4], data["videos"][vid]["sub"][4], dog.rect.x, dog.rect.y, scale)
+            fk = fontKiosque(data["videos"][vid]["main"][0], data["videos"][vid]["sub"][0], data["videos"][vid]["main"][1], data["videos"][vid]["sub"][1], data["videos"][vid]["main"][2], data["videos"][vid]["sub"][2], data["videos"][vid]["main"][3], data["videos"][vid]["sub"][3], data["videos"][vid]["main"][4], data["videos"][vid]["sub"][4], dog.rect.x, dog.rect.y, scale, colorConv(data["videos"][vid]["main"][5]), colorConv(data["videos"][vid]["main"][6]), colorConv(data["videos"][vid]["sub"][5]), colorConv(data["videos"][vid]["sub"][6]))
             fk.setCallback(lambda: launchVideo(vid, screenx, screeny))
             klist.append((data["videos"][vid]["order"],fk))
             

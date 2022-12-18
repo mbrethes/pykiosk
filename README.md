@@ -27,7 +27,7 @@ This program is a kiosk. In the background, there is an animated GIF of your des
 The user selects menu elements by pressing up and down. Enter launches either a video or an application depending on how you configured the menu. When the video or game quits, 
 the menu comes back, preventing a person from leaving the application.
 
-This goes best with a limited setup where the person can only press specific keys on the keyboard (keypad and enter).
+This goes best with a limited setup where the person can only press specific keys on the keyboard (keypad and enter), and where the desktop is empty and menu bar hidden.
 
 "Q" quits the kiosk.
 
@@ -42,7 +42,7 @@ The binaries come from Python's website, Videolan.org's website, and the "wheels
 
 Run install.bat. This installer will install python, vlc, pygame, and pillow, and it will create a shortcut to launch.bat in your Startup menu.
 
-When the user connects to his account, the kiosk starts.
+When you will reconnect to the current account, the kiosk starts.
 
 If you need to move the directory containing the kiosk after installation, run "changedirectory.bat" after moving the directory, that will update the link in the startup menu.
 
@@ -56,7 +56,7 @@ You will need:
 
 Download them and install.
 
-Run python kiosk.py until it works.
+Try running "python3 kiosk.py" until it works.
 
 ### With Linux
 
@@ -80,16 +80,16 @@ Edit conf/conf.json by inspiring yourself with the [sample](conf/conf.json.sampl
             "apps":{
                 "gamedirectory1":{
                     "app":"game.exe",
-                    "main":["sample.ttf", "Run",32, 23, 323],
-                    "sub":["sample.ttf", "Some app!",12, 27, 369],
+                    "main":["sample.ttf", "Run",32, 23, 323, "cccccc","ffffff"],
+                    "sub":["sample.ttf", "Some app!",12, 27, 369, "cccccc","ffffff"],
                     "order": 2
                 },
                 ...
             },
             "videos":{
                 "videodirectory1":{
-                    "main":["sample.ttf", "Show", 30, 23, 225],
-                    "sub":["sample.ttf", "Some video!", 13 , 25, 263],
+                    "main":["sample.ttf", "Show", 30, 23, 225, "cccccc","ffffff"],
+                    "sub":["sample.ttf", "Some video!", 13 , 25, 263, "cccccc","ffffff"],
                     "order": 1
                 },
                 ...
@@ -98,7 +98,8 @@ Edit conf/conf.json by inspiring yourself with the [sample](conf/conf.json.sampl
 
 Each menu element is defined by a title ("main") _and_ a subtitle ("sub"). The first parameter indicates the font used, the second parameter the UTF-8 string to display,
 the 3rd parameter the font size in pixels, _relative to the background image's size_ (a 10px font with a 512px gif will be displayed at a 20px width if the gif is stretched
-fullscreen at a resolution of 1024px), parameter 4 and 5 are the localization of the top left corner of the text element.
+fullscreen at a resolution of 1024px), parameter 4 and 5 are the localization of the top left corner of the text element, and parameter 6-7 are the normal and highlight
+color of the font, expressed in hexadecimal RGB (00 to ff).
 
 Put the font(s) in the font directory, the filename must match the one indicated in conf.json. OTF and TTF work.
 
