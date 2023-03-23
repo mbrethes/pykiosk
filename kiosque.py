@@ -1,7 +1,7 @@
 """
 Kiosque
 
-(c) 2022 by Mathieu, etc.
+(c) 2022-2023 by Mathieu Brèthes
 
 Projet pour une borne "Dans Mon Quartier" de Nils Chertier.
 
@@ -16,9 +16,6 @@ Concept:
 
 TODO:
 
-tout.
-
-Animated GIF : https://pypi.org/project/pygame-animatedgif/
 """
 
 import os,time
@@ -163,8 +160,8 @@ def main():
                     pygame.quit()
                     return
                 if event.key == pygame.K_DOWN:
-                    selected = (selected + 1) % 3
-                    for i in range(3):
+                    selected = (selected + 1) % len(klist)
+                    for i in range(len(klist)):
                         if i == selected:
                             klist[i].select()
                         else:
@@ -174,8 +171,8 @@ def main():
                     if selected > 0:
                         selected -= 1
                     else:
-                        selected = 2
-                    for i in range(3):
+                        selected = len(klist) - 1
+                    for i in range(len(klist)):
                         if i == selected:
                             klist[i].select()
                         else:

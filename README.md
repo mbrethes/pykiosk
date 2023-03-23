@@ -35,7 +35,7 @@ In windows, Alt-Tab and others work and enable the person to leave, so be carefu
 
 ## Installation
 
-### With Windows (Only tested on Windows 10)
+### With Windows (Only tested on Windows 10 and Windows 7)
 
 Edit [install.bat](install.bat) to your convenience. You can either use the binaries included in the install/ directory, or download your own.
 The binaries come from Python's website, Videolan.org's website, and the "wheels" for pygame and pillow come from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/).
@@ -50,7 +50,7 @@ If you need to move the directory containing the kiosk after installation, run "
 
 You will need:
 
-- Python version 3.10
+- Python version 3.8+
 - PyGame and PILlow up, but not higher than, version 8.4.0 (will NOT work with 9.x.x)
 - VLC version 3.x
 
