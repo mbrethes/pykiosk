@@ -5,7 +5,7 @@ from PIL import Image
 
 class AnimatedGifSprite(pygame.sprite.Sprite):
     """A Sprite-derived class that handles animation of animated GIFs"""
-    def __init__(self, position, filename):
+    def __init__(self, position, filename, screen):
         """Construct a new AnimatedGifSprite object.
         By default playback of the animation is active and with every call to
         the :func:`update`-function the correct next frame is selected.
@@ -13,6 +13,8 @@ class AnimatedGifSprite(pygame.sprite.Sprite):
             coordinates where the sprite will be placed
         :param string filename: Path to an animated GIF file"""
         super().__init__()
+
+        self.screen = screen
 
         self.filename = filename
         self.playback_speed = 1
@@ -31,6 +33,24 @@ class AnimatedGifSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
+    def displayProgress(self, count, total):
+        """
+        Displays a progress bar in the middle of the screen, with percentage according to the information given.
+        """
+        
+        screenx = pygame.display.get_surface().get_width()
+        screeny = pygame.display.get_surface().get_height()
+        
+        barminx = screenx / 2 - (screenx / 10)
+        barminy = screeny / 2 - (screeny / 100)
+        barw = 2 * (screenx / 10)
+        barh = 2 * (screeny / 100)
+        
+        barperw = barw * count / total
+
+        pygame.draw.rect(self.screen, (25, 25, 25), pygame.Rect(barminx, barminy, barw, barh))
+        pygame.draw.rect(self.screen, (200, 200, 200), pygame.Rect(barminx, barminy, barperw, barh))
+        pygame.display.flip()
 
     def get_frames(self, filename):
         image = Image.open(filename) 
@@ -42,25 +62,24 @@ class AnimatedGifSprite(pygame.sprite.Sprite):
 
         all_tiles = []
         count = 0
-        try:
-            while 1:
-                if not image.tile:
-                    image.seek(0)
-                if image.tile:
-                    all_tiles.append(image.tile[0][3][0])
-                image.seek(image.tell()+1)
-                count += 1
-                print("Stage 1 loading image %d"%count)
-        except EOFError:
-            image.seek(0)
+        
+        nbframes = getattr(image, "n_frames", 1)
+        print(nbframes)
+        for i in range(nbframes):
+            image.seek(i)
+            if not image.tile:
+                image.seek(0)
+            if image.tile:
+                all_tiles.append(image.tile[0][3][0])
+            self.displayProgress(i, nbframes * 2)
+            print("Stage 1 loading image %d"%i)
 
         print("Stage 1 Loaded all, continuing.")
         all_tiles = tuple(set(all_tiles))
 
         frames = []
-        count = 0
-        try:
-            while 1:
+        for i in range(nbframes):
+                image.seek(i)
                 try:
                     duration = image.info["duration"]
                 except:
@@ -86,14 +105,14 @@ class AnimatedGifSprite(pygame.sprite.Sprite):
                         cons = True
                         pal = image.getpalette()
                         palette = []
-                        for i in range(0, len(pal), 3):
-                            rgb = pal[i:i+3]
+                        for z in range(0, len(pal), 3):
+                            rgb = pal[z:z+3]
                             palette.append(rgb)
                     elif all_tiles in ((7, 8), (8, 7)):
                         pal = image.getpalette()
                         palette = []
-                        for i in range(0, len(pal), 3):
-                            rgb = pal[i:i+3]
+                        for z in range(0, len(pal), 3):
+                            rgb = pal[z:z+3]
                             palette.append(rgb)
                     else:
                         palette = base_palette
@@ -106,20 +125,12 @@ class AnimatedGifSprite(pygame.sprite.Sprite):
                     pi.set_colorkey(image.info["transparency"])
                 pi2 = pygame.Surface(image.size, pygame.SRCALPHA)
                 if cons and len(frames) > 0:
-# original O(N^2) version:
-#                    for i in frames:
-#                        pi2.blit(i[0], (0,0))
-# since frames are cumulative, you only need to blit the previous frame, bc this one already had
-# all the previous frames blitted. Back to O(1)!
                     pi2.blit(frames[-1][0], (0,0))
                 pi2.blit(pi, (x0, y0), (x0, y0, x1-x0, y1-y0))
 
                 frames.append([pi2, duration])
-                image.seek(image.tell()+1)
-                count += 1
-                print("Stage 2 loading %s"%count)
-        except EOFError:
-            pass
+                print("Stage 2 loading %s"%i)
+                self.displayProgress(i+nbframes, nbframes * 2)
             
         print("Stage 2 finished.")
         return frames

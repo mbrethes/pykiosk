@@ -109,7 +109,7 @@ def main():
     
     screen = setup(0,0)    
 
-    dog = AnimatedGifSprite((0,0), os.path.join("img","fond_root.gif"))
+    dog = AnimatedGifSprite((0,0), os.path.join("img","fond_root.gif"), screen)
     
     screenx = pygame.display.get_surface().get_width()
     screeny = pygame.display.get_surface().get_height()
