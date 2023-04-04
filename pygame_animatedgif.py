@@ -71,7 +71,7 @@ class AnimatedGifSprite(pygame.sprite.Sprite):
                 image.seek(0)
             if image.tile:
                 all_tiles.append(image.tile[0][3][0])
-            self.displayProgress(i, nbframes * 2)
+            self.displayProgress(i/10, nbframes)
             print("Stage 1 loading image %d"%i)
 
         print("Stage 1 Loaded all, continuing.")
@@ -130,7 +130,7 @@ class AnimatedGifSprite(pygame.sprite.Sprite):
 
                 frames.append([pi2, duration])
                 print("Stage 2 loading %s"%i)
-                self.displayProgress(i+nbframes, nbframes * 2)
+                self.displayProgress(i*9/10 + nbframes/10, nbframes)
             
         print("Stage 2 finished.")
         return frames
